@@ -1,0 +1,8 @@
+Verified+2: Jenkins
+Code-Review+2: Wenbin Wu <wuwenbin2@huawei.com>
+Workflow+1: Wenbin Wu <wuwenbin2@huawei.com>
+Submitted-by: Jenkins
+Submitted-at: Mon, 16 Nov 2015 01:44:02 +0000
+Reviewed-on: https://review.openstack.org/245031
+Project: openstack/fuel-plugin-onos
+Branch: refs/heads/master
