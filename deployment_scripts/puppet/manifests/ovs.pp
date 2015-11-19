@@ -25,14 +25,14 @@ service {'neutron-server':
 }->
 cs_resource { "p_${neutron_ovs_agent}":
     ensure => absent,
-    before => Service["shut down and disable Neutron's agent services"],
+    before => Service["shutdown and disable Neutron's agent services"],
   }}
 else{
 exec{'remove neutron-openvswitch-agent auto start':
         command => "touch /opt/service;
         $cmd_remove_agent;
         sed -i /neutron-openvswitch-agent/d /opt/service",
-        before => Service["shut down and disable Neutron's agent services"],
+        before => Service["shutdown and disable Neutron's agent services"],
 }
 }
 
@@ -42,7 +42,7 @@ firewall{'222 vxlan':
       proto  => 'udp',
       action => 'accept',
 }->
-service {"shut down and disable Neutron's agent services":
+service {"shutdown and disable Neutron's agent services":
 		name => $neutron_ovs_agent,
 		ensure => stopped,
 		enable => false,
