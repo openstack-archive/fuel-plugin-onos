@@ -1,0 +1,15 @@
+#!/bin/bash
+set -eux
+DIR="$(dirname `readlink -f $0`)"
+TARGET="${DIR}/deployment_scripts/puppet/modules/onos/files"
+packages=packages.tar.gz
+packages_url=-http://58.251.166.184:9999/OPNFV/Compass4nfv/cache/packages.tar.gz
+cd $TARGET
+if [ ! -f "$packages" ]; then
+  wget --no-cookies $packages_url -P $TARGET
+fi
+
+tar zxf packages.tar.gz -C $TARGET
+mv packages/onos/* ./
+rm -rf packages.tar.gz
+rm -rf packages

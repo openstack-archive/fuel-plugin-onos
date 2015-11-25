@@ -1,0 +1,52 @@
+#!/bin/bash
+# chkconfig: 345 98 2
+# description: Open Network Operating System
+# onos    Startup script for onos
+# processname: onos
+
+prog=onos
+export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+export ONOS_APPS=<%= @onos_extra_features -%>
+
+cd /opt/onos/bin/
+start(){
+        echo $"Starting $prog..."
+        ./onos-service &
+        }
+stop(){
+        PID=`ps aux | grep java | grep karaf | awk '{print $2}'`
+        echo $"Stopping $prog $PID"
+        kill -9 $PID
+	sleep 10
+        }
+status(){
+        PID=`ps aux | grep java | grep karaf | awk '{print $2}'`
+        if test -z $PID
+        then
+          echo "onos stop/waiting"
+          exit 1
+        else
+          echo "onos start/running, process $PID."
+          exit 0
+        fi
+        }
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart)
+        stop
+        start
+        ;;
+  status)
+        status
+        ;;
+  *)
+        echo "Please use: $0 {start|stop|status}"
+        exit 1
+        ;;
+esac
