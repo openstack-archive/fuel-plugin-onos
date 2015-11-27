@@ -8,10 +8,18 @@ $public_vip = hiera('public_vip')
 $management_vip = hiera('management_vip')
 $controllers_names = $onos::controllers_names
 $controllers_ip = $onos::controllers_ip
+$onos_pkg_name = $onos::onos_pkg_name
+$jdk8_pkg_name = $onos::jdk8_pkg_name
 
 Haproxy::Service        { use_include => true }
 Haproxy::Balancermember { use_include => true }
   
+Exec{
+        path => "/usr/bin:/usr/sbin:/bin:/sbin",
+        timeout => 180,
+        logoutput => "true",
+}
+
 file{ '/opt/onos_config.sh':
         source => "puppet:///modules/onos/onos_config.sh",
 } ->
@@ -19,6 +27,11 @@ exec{ 'install onos config':
         command => "sh /opt/onos_config.sh;
 	rm -rf /opt/onos_config.sh;",
         path => "/usr/bin:/usr/sbin:/bin:/sbin",
+}->
+exec{ "clean used files":
+        command => "rm -rf /opt/$onos_pkg_name;
+        rm -rf /opt/$jdk8_pkg_name
+        rm -rf /root/.m2/*.tar"
 }->
 exec{ 'onos boot features':
         command => "sed -i '/^featuresBoot=/c\featuresBoot=$onos_boot_features' $onos_home/$karaf_dist/etc/org.apache.karaf.features.cfg",

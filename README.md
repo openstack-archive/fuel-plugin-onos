@@ -2,7 +2,7 @@
 
 ##Brief##
 
-This plugin will install [ Open Network Operating System (ONOS) controller](https://wiki.onosproject.org/display/ONOS/Wiki+Home), which is a typical SDN controller, and set it as a manager of ovs.
+[ Open Network Operating System (ONOS) controller](https://wiki.onosproject.org/display/ONOS/Wiki+Home) is a typical SDN controller. This plugin will install it and set it as the manager of ovs.
 
 
 ##Notification##
@@ -75,7 +75,7 @@ All action is with Fuel UI wizard.
 1.Create a new environment.   
 2.Select 'onos plugin' on Settings tab.   
 
-    ? onos plugin 
+    ☑ onos plugin 
 
 3.Select a node with role 'controller' and others with role 'compute'.  
 Notice: In avoid of deployging failure, pay attentions to node configurations espacelly those for interfaces. 
@@ -103,9 +103,17 @@ Notice: In case of version problems, the onos rpm uses jdk and onos packages tha
 ###Testing###
 
 1. Web UI is recommended for ONOS controller with tuitive information of topo, devices and etc.
-For that purpose, IP address of horizon should be ready, which can be found in fuel master after successful deployment. The web will run into the log page after inputing the path, username and password are both 'karaf'. Now enjot ONOS!
+For that purpose, IP address of the controller should be ready. The web will run into the log page after inputing the path, the username and password are both karaf. Now enjot ONOS!
 
-	Web UI: http://horizon_ip:8181/onos/ui/index.html 
+        fuel node
+
+        id | status | name             | cluster | ip        | mac               | roles                | pending_roles | online | group_id
+        ---|--------|------------------|---------|-----------|-------------------|----------------------|---------------|--------|---------
+        1  | ready  | Untitled (60:b8) | 1       | 10.20.0.1 | 52:54:00:00:60:b8 | ceph-osd, controller |               | True   | 1      
+        2  | ready  | Untitled (23:6f) | 1       | 10.20.0.2 | 52:54:00:51:23:6f | ceph-osd, compute    |               | True   | 1     
+
+ 
+	Web UI: http://controller_ip:8181/onos/ui/index.html 
 2. CLI is capable of more diverse functionality by running /opt/onos/bin/onos. More about CLI can be found in [The ONOS CLI](
 https://wiki.onosproject.org/display/ONOS/The+ONOS+CLI).
 
@@ -117,7 +125,6 @@ https://wiki.openstack.org/wiki/Fuel/Plugins).
 
 ##Contributors##
 
-?	Wu Wenbin <wuwenbin2@huawei.com>  
-?	Zhang Haoyu <zhanghaoyu7@huawei.com>
-
+•	Wu Wenbin <wuwenbin2@huawei.com>  
+•	Zhang Haoyu <zhanghaoyu7@huawei.com>
 
