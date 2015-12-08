@@ -8,11 +8,10 @@ This plugin will install [ Open Network Operating System (ONOS) controller](http
 ##Notification##
 
 
-* Fuel opentack version should be after 6.1.
+* Fuel opentack version should be after 7.0.
 * Only supports the environment with network type: Neutron.
 * Live migration is supported.
-* Cluster of onos is supported.
-* L3 traffic is still on the way.
+* L2 and L3 traffic are supported.
 
 
 ##Installation Guide##
@@ -58,7 +57,7 @@ Notice: Above steps aren't liminited with the environment of master, you can als
 
         id | name   | version | package_version
         ---|--------|---------|----------------
-        1  | onos   | 0.1.1   | 2.0.0
+        1  | onos   | 0.7.0   | 3.0.0
 
      
 7. Check if the plugin is enabled on the settings table.      

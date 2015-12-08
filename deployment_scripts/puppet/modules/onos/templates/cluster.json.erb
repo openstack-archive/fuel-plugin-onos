@@ -1,8 +1,8 @@
 {"ipPrefix": "192.168.0.*",
   "nodes": [
 	<% index = 1 -%>
-	<%- @controllers_ip.each do |ip|  -%>
-        <%- if index == @controllers_ip.size -%>
+	<%- @manager_ip.each do |ip|  -%>
+        <%- if index == @manager_ip.size -%>
         {
         "ip": "<%= ip -%>",
         "id": "<%= ip -%>",

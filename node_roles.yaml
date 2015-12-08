@@ -1,0 +1,9 @@
+onos:
+  name: "onos controller"
+  description: "sdn controller"
+  has_primary: false
+  public_ip_required: false
+  weight: 200
+  limits:
+    max: 1
+    min: 1
