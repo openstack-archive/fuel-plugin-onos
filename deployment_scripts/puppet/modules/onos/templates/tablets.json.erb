@@ -1,8 +1,8 @@
 {
     "nodes": [
 	<%- index = 1 -%>
-	<%- @controllers_ip.each do |ip| -%>
-        <%- if index == @controllers_ip.size -%>
+	<%- @manager_ip.each do |ip| -%>
+        <%- if index == @manager_ip.size -%>
         {
         "ip": "<%= ip %>",
         "id": "<%= ip %>",
@@ -20,12 +20,12 @@
     	],
     "partitions": {
 	<%- key = 1 -%>
-        <%- @controllers_ip.each do |ip| -%>
-        <%- if key == @controllers_ip.size -%>
+        <%- @manager_ip.each do |ip| -%>
+        <%- if key == @manager_ip.size -%>
         "p<%= key -%>":[
 		<%- index = 1 -%>
-        <%- @controllers_ip.each do |ip| -%>
-        <%- if index == @controllers_ip.size -%>
+        <%- @manager_ip.each do |ip| -%>
+        <%- if index == @manager_ip.size -%>
         {
             "ip": "<%= ip %>",
             "id": "<%= ip %>",
@@ -45,8 +45,8 @@
         <%- else -%>
         "p<%= key -%>":[
         <%- index = 1 -%>
-        <%- @controllers_ip.each do |ip| -%>
-        <%- if index ==  @controllers_ip.size -%>
+        <%- @manager_ip.each do |ip| -%>
+        <%- if index ==  @manager_ip.size -%>
         {
                 "ip": "<%= ip %>",
                 "id": "<%= ip %>",
