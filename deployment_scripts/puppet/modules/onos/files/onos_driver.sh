@@ -2,8 +2,9 @@
 
 set -eux
 
-#apt-get -y install git
 cd /opt
-git clone https://github.com/openstack/networking-onos.git
+#git clone https://github.com/openstack/networking-onos.git
+tar xf networking-onos.tar
 cd networking-onos
 python setup.py install
+

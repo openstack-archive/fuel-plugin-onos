@@ -33,16 +33,6 @@ exec{ "clean used files":
 exec{ 'onos boot features':
         command => "sed -i '/^featuresBoot=/c\featuresBoot=$onos_boot_features' $onos_home/$karaf_dist/etc/org.apache.karaf.features.cfg",
         path => "/usr/bin:/usr/sbin:/bin:/sbin",
-}->
-file{ "${onos_home}/config/cluster.json":
-
-        ensure => file,
-        content => template('onos/cluster.json.erb')
-}->
-
-file{ "${onos_home}/config/tablets.json":
-        ensure => file,
-        content => template('onos/tablets.json.erb'),
 }
 case $::operatingsystem {
    ubuntu:{
@@ -56,5 +46,6 @@ case $::operatingsystem {
         content => template('onos/centos/onos.erb'),
 	mode => 0777
 }}}
+
 
 }

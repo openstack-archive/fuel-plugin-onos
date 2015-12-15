@@ -60,5 +60,8 @@ exec{'Set ONOS as the manager':
 }
 
 
-
-
+if member($roles, 'compute') {
+exec{"net config":
+        command => "ifconfig eth3 up",
+}
+}

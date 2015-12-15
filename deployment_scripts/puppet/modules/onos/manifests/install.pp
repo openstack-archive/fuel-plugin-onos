@@ -41,6 +41,7 @@ file{ "/opt/$onos_pkg_name":
 file{ "/opt/$jdk8_pkg_name":
         source => "puppet:///modules/onos/$jdk8_pkg_name",
 } ->
+
 file{ '/root/.m2/':
         ensure => 'directory',
         recurse => true,

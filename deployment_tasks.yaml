@@ -56,3 +56,11 @@
     puppet_manifest: puppet/manifests/neutron.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 600
+- id: onos_config_net
+  role: [onos]
+  requires: [onos_config_neutron]
+  required_for: [post_deployment_end]
+  type: shell
+  parameters:
+    cmd: ./netconfig.sh
+    timeout: 120
