@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -eux
+ifconfig eth3 <%= @gateway_ip -%>00/24 up
+route add default gw <%= @gateway_ip %>
+ping -c 5 <%= @gateway_ip %>
+gatewayMac=`arp -a <%= @gateway_ip -%> | awk '{print $4}'`
+/opt/onos/bin/onos "externalgateway-update -m $gatewayMac"
+ifconfig eth3 0 up
+route del default gw <%= @gateway_ip %>
