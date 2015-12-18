@@ -19,10 +19,6 @@ ubuntu:{
 $roles =  $onos::roles
 
 if member($roles, 'primary-controller') {
-service {'neutron-server':
-          ensure => stopped,
-          enable => false,
-}->
 cs_resource { "p_${neutron_ovs_agent}":
     ensure => absent,
     before => Service["shut down and disable Neutron's agent services"],
@@ -58,6 +54,7 @@ exec{'Set ONOS as the manager':
         command => "su -s /bin/sh -c 'ovs-vsctl set-manager tcp:${onos::manager_ip}:6640'",
 
 }
+
 
 
 if member($roles, 'compute') {

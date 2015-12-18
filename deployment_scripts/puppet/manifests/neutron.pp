@@ -1,18 +1,16 @@
 include onos
 
 Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
+
+$neutron_config = hiera_hash('quantum_settings')
+$nets = $neutron_config['predefined_networks']
 $net04_ext =
     {"shared"=>false,
      "L2"=>
       {"network_type"=>"vxlan",
        "router_ext"=>true,
        "segment_id"=>"10000"},
-     "L3"=>
-      {"nameservers"=>[],
-       "subnet"=>"172.16.0.0/24",
-       "floating"=>"172.16.0.50:172.16.0.253",
-       "gateway"=>"172.16.0.1",
-       "enable_dhcp"=>false},
+     "L3"=> $nets['net04_ext']['L3'],
      "tenant"=>"admin"}
 $net04 =
     {"shared"=>false,
@@ -20,23 +18,31 @@ $net04 =
       {"network_type"=>"vxlan",
        "router_ext"=>false,
        "segment_id"=>"500"},
-     "L3"=>
-      {"nameservers"=>["114.114.114.114", "8.8.8.8","8.8.4.4"],
-       "subnet"=>"192.168.111.0/24",
-       "gateway"=>"192.168.111.1",
-       "enable_dhcp"=>true},
-     "tenant"=>"admin"}
-
-$network_type = 'vxlan'
+     "L3"=> $nets['net04']['L3'],
+      "tenant"=>"admin"}
 $roles =  $onos::roles
+$network_type = 'vxlan'
 
 if member($roles, 'primary-controller') {
 cs_resource { 'p_neutron-l3-agent':
       ensure => absent,
-      before => Service ["start neutron service"],
-}
+      require => Exec ['stop neutron'],
+}->
+exec{ 'delete Neutron db':
+        command  => "mysql -e 'drop database if exists neutron;';
+                    mysql -e 'create database neutron character set utf8;';
+                    mysql -e \"grant all on neutron.* to 'neutron'@'%';\";
+                    neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugin.ini upgrade head;",
+	before => Service ['start neutron service'],
 }
 
+}
+
+
+
+exec{ 'stop neutron':
+        command  => "service neutron-server stop",
+}
 package { 'install git':
   ensure => installed,
   name   => "git",
@@ -65,17 +71,21 @@ neutron_plugin_ml2 {
   'onos/username':           value => 'admin';
   'onos/url_path':           value => "http://${onos::manager_ip}:8181/onos/vtn";
 }->
-
-exec{ 'delete Neutron db':
-        command  => "mysql -e 'drop database if exists neutron;';
-		    mysql -e 'create database neutron character set utf8;';
-		    mysql -e \"grant all on neutron.* to 'neutron'@'%';\";
-		    neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugin.ini upgrade head;",
-} ->
-service {"start neutron service":
+service {'start neutron service':
          name => "neutron-server",
          ensure => running
-}->
+}
+
+
+
+if member($roles, 'primary-controller') {
+
+    Service<| title == 'start neutron service' |> ->
+      Openstack::Network::Create_network <||>
+
+    Service<| title == 'start neutron service' |> ->
+      Openstack::Network::Create_router <||>
+
 openstack::network::create_network{'net04':
     netdata => $net04,
     segmentation_type => $network_type,
@@ -83,12 +93,10 @@ openstack::network::create_network{'net04':
   openstack::network::create_network{'net04_ext':
     netdata => $net04_ext,
     segmentation_type => $network_type,
-}-> 
-openstack::network::create_router{'router04':
+} ->
+  openstack::network::create_router{'router04':
     internal_network => 'net04',
     external_network => 'net04_ext',
     tenant_name      => 'admin',
 }
-
-
-
+}
