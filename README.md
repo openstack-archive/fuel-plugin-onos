@@ -78,14 +78,6 @@ All action is with Fuel UI wizard.
     ? onos plugin 
 
 3.Select a node with role 'controller' and others with role 'compute'.  
-Notice: In avoid of deployging failure, pay attentions to node configurations espacelly those for interfaces. 
-
-        | interfaces   | useage                 |
-        |--------------|------------------------|
-        | eht0         | Admin(PXE)             |
-        | eht1         | Storage and Management | 
-        | eht2         | Private                | 
-        | eht3         | Public                 | 
 
 4.Click 'Deploy changes' to enable nodes with ONOS.  
 
