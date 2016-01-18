@@ -2,4 +2,9 @@ attributes:
   metadata:
     restrictions:
       - "cluster:net_provider != 'neutron'": "Neutron only"
-
+  public_eth:
+    description: "Please note that onos needs an independent eth for public network when interfaces of nodes are configured, or L3 traffic to internet will fail! Defualt is eth3."
+    type: text
+    label: Public Ethernet Port
+    weight: 20
+    value: eth3

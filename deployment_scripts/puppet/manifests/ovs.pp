@@ -1,5 +1,6 @@
 include onos
 
+
 Exec{path => "/usr/bin:/usr/sbin:/bin:/sbin",}
 
 case $::operatingsystem{
@@ -19,14 +20,11 @@ ubuntu:{
 $roles =  $onos::roles
 
 if member($roles, 'primary-controller') {
-service {'neutron-server':
-          ensure => stopped,
-          enable => false,
-}->
 cs_resource { "p_${neutron_ovs_agent}":
     ensure => absent,
     before => Service["shut down and disable Neutron's agent services"],
-  }}
+}
+}
 else{
 exec{'remove neutron-openvswitch-agent auto start':
         command => "touch /opt/service;
@@ -60,5 +58,39 @@ exec{'Set ONOS as the manager':
 }
 
 
+$public_eth = $onos::public_eth
+if member($roles, 'compute') {
+exec{"net config":
+        command => "ifconfig $public_eth up",
+}
+}
+else
+{
+exec{"sleep 20 for ovsconnect":
+        command => "sleep 20",
+        require => Exec['Set ONOS as the manager'],
+}->
+exec{"delete public port from ovs of controllers":
+        command => "ovs-vsctl del-port br-int $public_eth",
+}->
+
+service {'stop neutron service':
+         name => "neutron-server",
+         ensure => stopped
+}->
+neutron_config { 'DEFAULT/service_plugins':
+        value => 'onos_router,neutron.services.metering.metering_plugin.MeteringPlugin';
+}->
+
+
+neutron_plugin_ml2 {
+  'ml2/mechanism_drivers':       value => 'onos_ml2';
+  'ml2/tenant_network_types':    value => 'vxlan';
+  'ml2_type_vxlan/vni_ranges':   value => '100:50000';
+  'onos/password':           value => 'admin';
+  'onos/username':           value => 'admin';
+  'onos/url_path':           value => "http://${onos::manager_ip}:8181/onos/vtn";
+}
+}
 
 

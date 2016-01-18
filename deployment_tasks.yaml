@@ -1,0 +1,67 @@
+# These tasks will be merged into deployment graph. Here you
+# can specify new tasks for any roles, even built-in ones.
+
+- id: onos
+  type: group
+  role: [onos]
+  requires: [deploy_start]
+  required_for: [deploy_end, primary-controller, controller]
+  tasks: [fuel_pkgs, hiera, globals, tools, logging, netconfig,
+        hosts, firewall, deploy_start, onos_install]
+  parameters:
+    strategy:
+      type: parallel
+- id: onos_install
+  type: puppet
+  groups: [onos]
+  requires: [deploy_start, hosts, firewall, globals]
+  required_for: [deploy_end, openstack-network]
+  parameters:
+    puppet_manifest: puppet/manifests/onos-install.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 720
+- id: onos_service
+  type: puppet
+  role: [onos]
+  requires: [post_deployment_start]
+  required_for: [post_deployment_end]
+  parameters:
+    puppet_manifest: puppet/manifests/onos-service.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 1400
+- id: onos_ha
+  type: puppet
+  role: ['primary-controller','controller']
+  requires: [onos_service]
+  required_for: [post_deployment_end]
+  parameters:
+    puppet_manifest: puppet/manifests/onos-ha.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 1400
+- id: onos_config_ovs
+  role: ['primary-controller','controller','compute']
+  requires: [onos_ha]
+  required_for: [post_deployment_end]
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/ovs.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 600
+- id: onos_config_neutron
+  role: ['primary-controller', 'controller']
+  requires: [onos_config_ovs]
+  required_for: [post_deployment_end]
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/neutron.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 1800
+- id: onos_config_net
+  role: [onos]
+  requires: [onos_config_neutron]
+  required_for: [post_deployment_end]
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/netconfig.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 600

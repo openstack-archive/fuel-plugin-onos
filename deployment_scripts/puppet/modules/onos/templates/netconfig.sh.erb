@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -eux
+ping -c 5 <%= @gateway_ip %>
+gatewayMac=`arp -a <%= @gateway_ip -%> | awk '{print $4}'`
+/opt/onos/bin/onos "externalgateway-update -m $gatewayMac"
